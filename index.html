@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f3d5e"><meta name="apple-mobile-web-app-capable" content="yes">
+<title>Drain Type Finder</title>
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Drain">
+<link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+:root{--bg:#f3f5f7;--card:#fff;--ink:#16202a;--mut:#5b6875;--pri:#0f3d5e;--acc:#e07a1f;--line:#dde3e8}
+@media(prefers-color-scheme:dark){:root{--bg:#0e151b;--card:#18222b;--ink:#e6edf3;--mut:#93a1ae;--pri:#4ea3d8;--acc:#f0a050;--line:#2a3742}}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);
+padding:env(safe-area-inset-top) env(safe-area-inset-right) calc(70px + env(safe-area-inset-bottom)) env(safe-area-inset-left)}
+header{background:#0f3d5e;color:#fff;padding:14px 16px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px}.me{text-align:right;font-size:11px;line-height:1.35;opacity:.95}.me b{display:block;font-size:13px}.me span{display:block;opacity:.85}header h1{margin:0;font-size:18px}header p{margin:2px 0 0;font-size:12px;opacity:.8}
+main{padding:12px;max-width:640px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+label{font-size:12px;color:var(--mut);display:block;margin-bottom:4px}
+.row{display:flex;gap:8px}.row>div{flex:1}
+input{width:100%;font-size:18px;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-top:10px}
+.seg button{flex:1;padding:10px;font-size:15px;border:0;background:var(--bg);color:var(--ink)}
+.seg button.on{background:var(--pri);color:#fff;font-weight:600}
+.hint{font-size:12px;color:var(--mut);margin:8px 2px 0}
+.res h3{margin:0 0 2px;font-size:17px;display:flex;justify-content:space-between;gap:8px}
+.tag{font-size:12px;padding:2px 8px;border-radius:20px;background:var(--acc);color:#fff;white-space:nowrap;align-self:center}
+.ch{font-size:14px;color:var(--mut);margin-bottom:8px}
+table{width:100%;border-collapse:collapse;font-size:14px}td{padding:5px 2px;border-top:1px solid var(--line)}td:last-child{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.rem{font-size:12px;margin-top:6px;color:var(--acc)}.ref{font-size:12px;color:var(--mut);margin-top:6px}
+.empty{text-align:center;color:var(--mut);padding:24px}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;border:0;background:none;padding:12px 4px;font-size:13px;color:var(--mut)}nav button.on{color:var(--pri);font-weight:700}
+.list td{font-size:13px}.list td:last-child{font-weight:400}.list tr.sel{background:rgba(224,122,31,.12)}
+.sm{font-size:12px;color:var(--mut)}
+.hd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px}.hd b{font-size:16px}.hd span{font-size:13px;color:var(--mut);white-space:nowrap}
+.g{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.g div{background:var(--bg);border-radius:8px;padding:6px 4px;text-align:center}
+.g b{display:block;font-size:15px;font-variant-numeric:tabular-nums}.g span{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.3px}
+.ft{font-size:11px;color:var(--mut);margin-top:8px}.res{padding:10px 12px}
+.xw{overflow:auto;max-height:70vh;-webkit-overflow-scrolling:touch}
+.xt{border-collapse:separate;border-spacing:0;border-top:1px solid var(--line);border-left:1px solid var(--line);font-size:12px;white-space:nowrap}
+.xt th,.xt td{border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:5px 7px;text-align:center;font-weight:400;font-variant-numeric:tabular-nums}
+.xt td:last-child{text-align:left;font-weight:400}
+.xt th{background:#0f3d5e;color:#fff;font-weight:600;white-space:normal;min-width:62px;max-width:96px;position:sticky;top:0;z-index:1}
+.xt td.ty{font-weight:700;text-align:left}.xt tbody tr:nth-child(even){background:var(--bg)}
+.xt .sk{position:sticky;z-index:2;background:var(--card)}
+.xt tbody tr:nth-child(even) td.sk{background:var(--bg)}
+.xt th.sk{z-index:3;background:#0f3d5e}
+.xt .skl{box-shadow:3px 0 4px -2px rgba(0,0,0,.25)}
+.xt td.ty{white-space:normal;min-width:70px;max-width:86px;line-height:1.2}
+.xt th:nth-child(-n+5),.xt td:nth-child(-n+5){min-width:0;padding:5px 4px}
+@media(max-width:520px){main{padding:8px}.card{padding:8px}.xt{font-size:11px}}
+.hide{display:none}
+</style></head><body>
+<header><div><h1>Drain Type Finder</h1><p>Dhaka–Sylhet Highway · DS-1</p></div><div class="me"><b>Md. Nasir Uddin</b><span>Civil Engineer</span><span>01919902255</span><button id="installBtn" hidden style="margin-top:6px;font-size:12px;padding:5px 9px;border:0;border-radius:6px;background:#e07a1f;color:#fff;font-weight:600">📲 Install</button></div></header>
+<main>
+<section id="v-search">
+ <div class="card">
+  <div class="row"><div><label>From chainage</label><input id="f" inputmode="decimal" placeholder="e.g. 9+214"></div>
+  <div><label>To chainage (optional)</label><input id="t" inputmode="decimal" placeholder="e.g. 9+235"></div></div>
+  <div class="seg" id="side"><button data-s="R/S" class="on">R/S</button><button data-s="L/S">L/S</button><button data-s="Both">Both</button></div>
+  
+ </div>
+ <div id="out"></div>
+</section>
+<section id="v-list" class="hide"><div class="card"><div class="seg" id="lside" style="margin-top:0"><button data-s="All" class="on">All</button><button data-s="R/S">R/S</button><button data-s="L/S">L/S</button></div>
+<div id="ltab" style="margin-top:8px"></div></div></section>
+<section id="v-types" class="hide"><div id="tout"></div></section>
+</main>
+<nav><button data-v="search" class="on">Search</button><button data-v="list">Full list</button><button data-v="types">Drain types</button></nav>
+<script>
+const D={"rows": [[500, 860, "R/S", "Type 1", 759, ""], [860, 1320, "R/S", "Type 1b", 759, ""], [1320, 1400.68, "R/S", "Type 1", 759, ""], [1400.68, 1527, "R/S", "Type 1a", 759, ""], [1700, 2200, "L/S", "No Drain", "812 & 936", "Change Data Sheet & Drain Type"], [1700, 1980, "R/S", "Type 2b", "812 & 936", ""], [1980, 2460, "R/S", "Type 2a", "812 & 936", ""], [2200, 2320, "L/S", "Type 1", "812 & 936", ""], [2320, 2560, "L/S", "Type 1b", "812 & 936", ""], [2460, 2560, "R/S", "Type 2c", "812 & 936", ""], [2560, 2760, "R/S", "Type 2b", "812 & 936", ""], [2560, 2700, "L/S", "Type 1", "812 & 936", ""], [2700, 2940, "L/S", "Type 1b", "812 & 936", ""], [2760, 2920, "R/S", "Type Burried", "812 & 936", ""], [2940, 3320, "L/S", "Type 1", "812 & 936", ""], [2920, 3120, "R/S", "Type 2a", "812 & 936", ""], [3120, 3280, "R/S", "Type 2c (Covered)", "812 & 936", ""], [3280, 3360, "R/S", "Type 2c", "812 & 936", ""], [3360, 3820, "R/S", "Type 2b", "812 & 936", ""], [2320, 3440, "L/S", "Type 1b", "812 & 936", ""], [3440, 3680, "L/S", "Type 1", "812 & 936", ""], [3820, 4120, "R/S", "Type 2c", "812 & 936", ""], [4120, 4200, "R/S", "Type 2b", "812 & 936", ""], [4200, 4320, "R/S", "Type 2c (Covered)", "812 & 936", ""], [4320, 4400, "R/S", "Type 2c", "812 & 936", ""], [3680, 4340, "L/S", "Type 1b", "812 & 936", ""], [4340, 5240, "L/S", "Type 1", "812 & 936", ""], [4400, 4820, "R/S", "Type 2b", "812 & 936", ""], [5240, 5700, "L/S", "Type 1a", "812 & 936", ""], [4820, 4880, "R/S", "Type 2c", "812 & 936", ""], [4880, 5140, "R/S", "Type 2d", "812 & 936", ""], [5140, 5320, "R/S", "Type 2b", "812 & 936", ""], [5320, 5540, "R/S", "Type Burried", "812 & 936", ""], [5540, 5600, "R/S", "Type 2d", "812 & 936", ""], [5600, 5700, "R/S", "Type 2c", "812 & 936", ""], [5700, 6060, "L/S", "Type 1", "6927 & 8433", "Change Data Sheet"], [6060, 6580, "L/S", "Type 1b", "6927 & 8433", ""], [6580, 6840, "L/S", "Type 1", "6927 & 8433", ""], [6840, 6900, "L/S", "Type 1", 6927, ""], [6900, 7100, "L/S", "Type 1a", 6927, ""], [7100, 7200, "L/S", "Type 1", 6927, ""], [7200, 8520, "L/S", "Type 1b", 6927, ""], [8520, 9800, "L/S", "Type 1", 6927, ""], [5700, 5900, "R/S", "Type 2d", "6927 & 8433", ""], [5900, 6100, "R/S", "Type Burried", "6927 & 8433", ""], [6100, 6360, "R/S", "Type 2e", "6927 & 8433", ""], [6360, 6640, "R/S", "Type 2d", "6927 & 8433", ""], [6640, 6720, "R/S", "Type 2c", "6927 & 8433", ""], [6720, 6840, "R/S", "Type 2d", "6927 & 8433", ""], [6840, 6980, "R/S", "Type 2d", 6927, ""], [6980, 7280, "R/S", "Type 2a", 6927, ""], [7280, 7340, "R/S", "Type 2b", 6927, ""], [7340, 7560, "R/S", "Type 2c", 6927, ""], [7560, 7780, "R/S", "Type 2b", 6927, ""], [7780, 8560, "R/S", "Type 2a", 6927, ""], [8560, 8800, "R/S", "Type 2b", 6927, ""], [8800, 8940, "R/S", "Type 2a", 6927, ""], [8940, 9220, "R/S", "Type 2c", 6927, ""], [9220, 9360, "R/S", "Type 2a", 6927, ""], [9360, 9460, "R/S", "Type 2d", 6927, ""], [9460, 9800, "R/S", "Type 2a", 6927, ""], [15000, 15240, "L/S", "Type 1", 5909, ""], [15000, 15240, "R/S", "Type 1", 5909, ""], [15240, 15640, "L/S", "Type 1aa", 5909, "Details of 1a & 1aa are not similar That\u2019s why we mentioned it with 1aa"], [15240, 15640, "R/S", "Type 1aa", 5909, ""], [15980, 16100, "L/S", "Type 1aa", 5909, ""], [15980, 16100, "R/S", "Type 1aa", 5909, ""], [16160, 17200, "L/S", "Type 1a", 710, ""], [16160, 17200, "R/S", "Type 1a", 710, ""], [17200, 17800, "L/S", "Type 1", 710, ""], [17200, 17800, "R/S", "Type 1", 710, ""], [17800, 18160, "L/S", "Type 1b", 710, ""], [17800, 18160, "R/S", "Type 1b", 710, ""]], "types": {"Type D": [1.65, 0.2, 0.25, 0.25, 1.65, 0.2], "Type 2b": [2.375, 0.2, 0.2, 0.175, null, null], "Type 2a": [2.35, 0.175, 0.175, 0.175, null, null], "Type 1a": [1.55, 0.2, 0.2, 0.2, 1.55, 0.1], "Type 2c": [2.425, 0.25, 0.25, 0.175, null, null], "Type 1": [1.5, 0.175, 0.175, 0.175, 1.5, 0.1], "Type 1b": [1.45, 0.15, 0.15, 0.15, 1.45, 0.1], "Type 2d (Covered)": [2.6, 0.3, 0.3, 0.3, 2.6, 0.15], "Type 2b (Covered)": [2.4, 0.2, 0.2, 0.2, 2.4, 0.2], "Type 2c (Covered)": [2.25, 0.25, 0.25, 0.25, 2.25, 0.25], "Type 2d": [2.475, 0.3, 0.3, 0.175, null, null], "Type Burried": [3.1, 0.3, 0.3, 0.3, 3.1, 0.3], "Type 2f": [2.6, 0.3, 0.3, 0.3, 2.6, 0.3], "Type 2e": [2.525, 0.35, 0.35, 0.175, null, null], "Type 1aa": [1.6, 0.225, 0.225, 0.225, 1.6, 0.125], "Cross Road 1": [1.65, 0.25, 0.25, 0.25, 1.65, 0.2], "Cross Road 2f": [2.6, 0.3, 0.3, 0.3, 2.6, 0.3]}};
+const L=["BASE RCC width (m)","Base RCC thk (m)","Wall inner RCC thk (m)","Wall outer RCC thk (m)","Top slab width (m)","Top slab thk (m)"];
+const fmt=c=>{c=+c;const k=Math.floor(c/1000),m=c-k*1000;return k+"+"+(Math.round(m*100)/100).toString().padStart(3,"0")};
+const parse=s=>{s=(s||"").trim().replace(/\s/g,"");if(!s)return null;if(s.includes("+")){const[a,b]=s.split("+");return(+a)*1000+(+b)}return +s};
+const n=v=>v===null||v===undefined||v===""?"–":(+v).toFixed(3).replace(/0+$/,"").replace(/\.$/,"");
+let side="R/S",lside="All";
+const SL=["RCC W","Base t","Wall in","Wall out","Slab W","Slab t"];
+function details(type){const t=D.types[type];if(!t)return"<div class='sm'>No drain</div>";
+ const v=[["BFS",t[0]+0.1],["CC",t[0]+0.1]].concat(SL.map((l,i)=>[l,t[i]])).filter(x=>x[1]!==null&&x[1]!=="");
+ return "<div class='g'>"+v.map(x=>"<div><b>"+n(x[1])+"</b><span>"+x[0]+"</span></div>").join("")+"</div>"}
+function card(r){const[f,t,s,ty,ref,rem]=r;return "<div class='card res'><div class='hd'><b>"+ty+"</b><span>"+s+" · "+fmt(f)+"–"+fmt(t)+"</span></div>"+details(ty)+
+ ((ref!==""||rem)?"<div class='ft'>"+(ref!==""?"Dwg "+ref:"")+(rem?(ref!==""?" · ":"")+rem:"")+"</div>":"")+"</div>"}
+const HD=["Sl. No","From","-","To","Side","Drain Type","BASE BFS (m)","BASE CC (m)","BASE RCC (m)","BASE RCC (Tic._m)","Vertical Wall Inner RCC (Tic._m)","Vertical Wall Outer RCC (Tic_m)","Top Slab (W)","Top Slab (Tic._m)","Drwing Ref.","Remarks"];
+const e=v=>v===null||v===undefined||v===""?"":n(v);
+function xrow(r,i){const[f,to,s,ty,ref,rem]=r;const t=D.types[ty]||[];const rc=t.length?t[0]:"";
+ const c=[i+1,f,"-",to,s,ty,rc===""?"":rc+0.1,rc===""?"":rc+0.1,rc,t[1],t[2],t[3],t[4],t[5],ref,rem];
+ return "<tr>"+c.map((v,j)=>"<td"+(j==5?" class='ty'":"")+">"+(j==1||j==3?n(v):(j>=6&&j<=13?e(v):(v===null?"":v)))+"</td>").join("")+"</tr>"}
+function xtable(m){return "<div class='xw'><table class='xt'><thead><tr>"+HD.map(h=>"<th>"+h+"</th>").join("")+"</tr></thead><tbody>"+m.map(xrow).join("")+"</tbody></table></div>"}
+function stick(root){root.querySelectorAll("table.xt").forEach(tb=>{const hr=tb.tHead.rows[0];let left=0;
+ for(let j=0;j<6;j++){const w=hr.cells[j].getBoundingClientRect().width;
+  tb.querySelectorAll("tr").forEach(tr=>{const c=tr.cells[j];if(!c)return;c.classList.add("sk");c.style.left=left+"px";if(j==5)c.classList.add("skl")});left+=w}})}
+function search(){const a=parse(f.value),bb=parse(t.value);const o=document.getElementById("out");
+ try{localStorage.setItem("dtf",JSON.stringify([f.value,t.value,side]))}catch(e){}
+ if(a===null||isNaN(a)){o.innerHTML="<div class='empty'>Enter a chainage to find the drain type.</div>";return}
+ let lo=a,hi=(bb===null||isNaN(bb))?a:bb;if(lo>hi)[lo,hi]=[hi,lo];
+ const m=D.rows.filter(r=>(side==="Both"||r[2]===side)&&r[0]<=hi&&r[1]>=lo).sort((x,y)=>x[2].localeCompare(y[2])||x[0]-y[0]);
+ o.innerHTML=m.length?"<div class='card' style='padding:8px'>"+xtable(m)+"</div>":"<div class='empty'>No drain listed at "+fmt(lo)+(hi!==lo?" – "+fmt(hi):"")+" ("+side+").</div>";stick(o)}
+function list(){ltab.innerHTML=xtable(D.rows.filter(r=>lside==="All"||r[2]===lside));stick(ltab)}
+function types(){tout.innerHTML=Object.keys(D.types).map(k=>"<div class='card res'><div class='hd'><b>"+k+"</b></div>"+details(k)+"</div>").join("")}
+function setSeg(id,v){document.querySelectorAll("#"+id+" button").forEach(b=>b.classList.toggle("on",b.dataset.s===v))}
+document.getElementById("side").onclick=e=>{if(!e.target.dataset.s)return;side=e.target.dataset.s;setSeg("side",side);search()};
+document.getElementById("lside").onclick=e=>{if(!e.target.dataset.s)return;lside=e.target.dataset.s;setSeg("lside",lside);list()};
+function show(v){["search","list","types"].forEach(x=>document.getElementById("v-"+x).classList.toggle("hide",x!==v));
+ document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));window.scrollTo(0,0);if(v==="list")stick(ltab);if(v==="search")stick(document.getElementById("out"))}
+document.querySelector("nav").onclick=e=>{if(e.target.dataset.v)show(e.target.dataset.v)};
+f.oninput=t.oninput=search;
+try{const s=JSON.parse(localStorage.getItem("dtf"));if(s){f.value=s[0];t.value=s[1];side=s[2];setSeg("side",side)}}catch(e){}
+list();types();search();
+(function(){if(!('serviceWorker' in navigator)||!(location.protocol==='https:'||location.hostname==='localhost'))return;
+ addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+ const ib=document.getElementById('installBtn');let dp=null;
+ addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;ib.hidden=false});
+ ib.onclick=async()=>{if(!dp)return;dp.prompt();try{await dp.userChoice}catch(e){}dp=null;ib.hidden=true};
+ addEventListener('appinstalled',()=>{ib.hidden=true})})();addEventListener("resize",()=>{stick(ltab);stick(document.getElementById("out"))});
+</script></body></html>

@@ -1,0 +1,17 @@
+{
+  "name": "Drain Type Finder (DS-1)",
+  "short_name": "Drain",
+  "description": "Dhaka-Sylhet Highway DS-1: chainage diye drain type ar dimension khoja",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f3f5f7",
+  "theme_color": "#0f3d5e",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
